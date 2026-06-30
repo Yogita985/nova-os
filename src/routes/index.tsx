@@ -1,29 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { Background } from "@/components/os/Background";
+import { BootScreen } from "@/components/os/BootScreen";
+import { LockScreen } from "@/components/os/LockScreen";
+import { Desktop } from "@/components/os/Desktop";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Rishav Kumar — Developer OS Portfolio" },
+      { name: "description", content: "An immersive operating-system inspired portfolio for a full-stack developer. Boot, unlock, and explore terminal, projects, and more." },
+      { property: "og:title", content: "Rishav Kumar — Developer OS Portfolio" },
+      { property: "og:description", content: "Boot into a cyber-themed desktop OS portfolio with a live terminal, draggable windows, and immersive widgets." },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
+type Stage = "boot" | "lock" | "desktop";
+
 function Index() {
+  const [stage, setStage] = useState<Stage>("boot");
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="fixed inset-0 overflow-hidden bg-black">
+      <Background dim={stage === "desktop" ? 0.55 : 0.7} />
+      <AnimatePresence mode="wait">
+        {stage === "boot" && <BootScreen key="boot" onDone={() => setStage("lock")} />}
+        {stage === "lock" && <LockScreen key="lock" onUnlock={() => setStage("desktop")} />}
+        {stage === "desktop" && <Desktop key="desktop" />}
+      </AnimatePresence>
+    </main>
   );
 }
